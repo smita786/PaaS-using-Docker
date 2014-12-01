@@ -20,3 +20,9 @@ Benefits :
 
 1. Save money & time.
 2. Easy to deploy by naïve users as well
+
+Contributors:
+1. Snehal Shinde
+2. Smita Kumari
+3. Parin Porecha
+4. Saksham Garg
