@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>PaaS framework with docker</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="css/cloud.css" rel="stylesheet">
+        <link href="css/bootstrap.css" rel="stylesheet">
+
+
+        <!-- Custom styles for this template -->
+        <link href="jumbotron.css" rel="stylesheet">
+
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button> 
+                    <span class="glyphicon glyphicon-cloud" style="font-size: 25px; float: left; margin-top: 12px; margin-right: 5px; color: rgb(221, 221, 221);"></span><a class="navbar-brand" href="#">PaaS with Docker</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <form class="navbar-form navbar-right" role="form" method="post" action="login.php">
+                        <div class="form-group">
+                            <input type="text" name="email" placeholder="Email" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="password" placeholder="Password" class="form-control">
+                        </div>
+                        <button type="submit" name="login" class="btn btn-success">Sign in/up</button>
+                    </form>
+                </div><!--/.navbar-collapse -->
+            </div>
+        </div>
+
+        <!-- Main jumbotron for a primary marketing message or call to action -->
+        <div class="jumbotron">
+            <div class="container">
+
+                <div class="main">
+                    <div class="cloud_base">
+                        <span class="rounds"></span></div>
+                </div>
+                <form id="multiform" class="form-signin form-horizontal" role="form" action="index.php" method="post" enctype="multipart/form-data">
+                    <h2 class="form-signin-heading">Deploy an application</h2>
+                    <input type="text" name="app_name" class="form-control" placeholder="Application name" required autofocus>
+                    <br/>
+                    <select name="lang" class="form-control">
+                        <option value="" selected disabled="disabled">Select framework</option>
+                        <option value="html">HTML</option>
+                        <option value="php">PHP</option>
+                        <option value="php_mysql">PHP With Mysql</option>
+                        <option value="web2py">Python web2py Framework</option>
+                    </select>
+                    <br/>
+                    <div id="mysqlinfo" style="display: none">
+                        <label>Default username: root, password:root</label>
+                        <input type="text" name="mysql_user" class="form-control" placeholder="Mysql username" value="root" > 
+                    <br/><input type="password" name="mysql_pass" class="form-control" placeholder="Mysql password" value="root">
+                    <br/><input type="file" name="mysqldump" class="filestyle" data-buttonName="btn-primary" data-buttonText="upload mysql dump(.sql)"> <br/>
+                    </div>
+                    <input type="file" name="appArchive" accept="application/zip" class="filestyle" data-buttonName="btn-primary" data-iconName="glyphicon glyphicon-cloud-upload" data-buttonText="Choose app zip" required> <br/>
+                    <button class="btn btn-lg btn-primary" type="submit"><span class="glyphicon glyphicon-cloud"></span> <font>Deploy Now!</font></button>
+                </form>
+
+            </div> <!-- /container -->
+        </div>
+
+            <!-- Bootstrap core JavaScript
+            ================================================== -->
+            <!-- Placed at the end of the document so the pages load faster -->
+            <script src="js/jquery.min.js"></script>
+            <script src="js/bootstrap.min.js"></script>
+            <script type="text/javascript" src="js/bootstrap-filestyle.min.js"></script>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    var alert_dialog = '<div role="alert" class="alert alert-success" style="width:50%;margin:auto;display:none"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><strong>Well done!</strong> <font>You successfully read this important alert message.</font></div>';
+
+                    $("#multiform").submit(function (e)
+                    {
+                        $('body').css('cursor', 'wait');
+                        $('button[type="submit"] font').html('Deploying...');
+                        $('button[type="submit"]').prop('disabled', true);
+                        var formObj = $(this);
+                        var formURL = formObj.attr("action");
+                        var formData = new FormData(this);
+                        $.ajax({
+                            url: formURL,
+                            type: 'POST',
+                            data: formData,
+                            mimeType: "multipart/form-data",
+                            contentType: false,
+                            cache: false,
+                            processData: false,
+                            success: function (data, textStatus, jqXHR)
+                            {
+                                console.log(data);
+                                $('.alert-success').alert('close');
+                                $(alert_dialog).insertBefore(".main");
+                                $('.alert-success font').html('Your application url is <a href="http://' + data + '" target="_blank">http://' + data + '</a>');
+                                $('.alert-success').show();
+                                $('body').css('cursor', 'default');
+                                $('button[type="submit"] font').html('Deploy Now!');
+                                $('button[type="submit"]').prop('disabled', false);
+                            },
+                            error: function (jqXHR, textStatus, errorThrown)
+                            {
+                                alert('error');
+                                $('body').css('cursor', 'default');
+                                $('button[type="submit"] font').html('Deploy Now!');
+                                $('button[type="submit"]').prop('disabled', false);
+                            }
+                        });
+                        e.preventDefault(); //Prevent Default action.
+
+                    });
+                    
+                    $("select[name=lang]").change(function(){
+                        if($(this).val() === 'php_mysql') {
+                            $("#mysqlinfo").show();
+                        } else {
+                            $("#mysqlinfo").hide();
+                        }
+                    });
+                });
+            </script>
+    </body>
+</html>

@@ -1,0 +1,5 @@
+sudo docker rm $(sudo docker ps -a -q)
+sudo docker rmi $(sudo docker images -q | grep -v c1$)
+sudo docker build -t php_app .
+sudo ip addr add 10.1.98.121/21 dev eth4
+sudo docker run -name="php_cont6" -d -p 10.1.98.121:8091:80 -t php_app
